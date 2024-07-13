@@ -8,6 +8,7 @@ Are you preparing for a SQL interview or looking to enhance your database skills
 3. Data Aggregation and Analysis
 4. Joins and Subqueries
 5. Real-World Problem Solving
+6. Triggers on Tables for Record Log Maintenance
 
 🔍 **Why Watch This Video?**
 - Learn SQL by working on a real-world project
