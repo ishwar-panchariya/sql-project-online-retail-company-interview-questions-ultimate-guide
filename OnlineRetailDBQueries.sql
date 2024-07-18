@@ -479,3 +479,267 @@ GO
 -- Try to delete an existing record to see the effect of Trigger
 DELETE FROM Customers WHERE CustomerID = 5;
 GO
+
+/*
+===============================
+Implementing Indexes
+===============================
+
+Indexes are crucial for optimizing the performance of your SQL Server database, 
+especially for read-heavy operations like SELECT queries. 
+
+Let's create indexes for the OnlineRetailDB database to improve query performance.
+
+A. Indexes on Categories Table
+	1. Clustered Index on CategoryID: Usually created with the primary key.
+*/
+
+USE OnlineRetailDB;
+GO
+-- Clustered Index on Categories Table (CategoryID)
+CREATE CLUSTERED INDEX IDX_Categories_CategoryID
+ON Categories(CategoryID);
+GO
+
+/*
+B. Indexes on Products Table
+	1. Clustered Index on ProductID: This is usually created automatically when 
+	   the primary key is defined.
+	2. Non-Clustered Index on CategoryID: To speed up queries filtering by CategoryID.
+	3. Non-Clustered Index on Price: To speed up queries filtering or sorting by Price.
+*/
+
+-- Drop Foreign Key Constraint from OrderItems Table - ProductID
+ALTER TABLE OrderItems DROP CONSTRAINT FK__OrderItem__Produ__440B1D61;
+
+-- Clustered Index on Products Table (ProductID)
+CREATE CLUSTERED INDEX IDX_Products_ProductID 
+ON Products(ProductID);
+GO
+
+-- Non-Clustered Index on CategoryID: To speed up queries filtering by CategoryID.
+CREATE NONCLUSTERED INDEX IDX_Products_CategoryID
+ON Products(CategoryID);
+GO
+
+-- Non-Clustered Index on Price: To speed up queries filtering or sorting by Price.
+CREATE NONCLUSTERED INDEX IDX_Products_Price
+ON Products(Price);
+GO
+
+-- Recreate Foreign Key Constraint on OrderItems (ProductID Column)
+ALTER TABLE OrderItems ADD CONSTRAINT FK_OrderItems_Products
+FOREIGN KEY (ProductID) REFERENCES Products(ProductID);
+GO
+
+/*
+C. Indexes on Orders Table
+	1. Clustered Index on OrderID: Usually created with the primary key.
+	2. Non-Clustered Index on CustomerID: To speed up queries filtering by CustomerID.
+	3. Non-Clustered Index on OrderDate: To speed up queries filtering or sorting by OrderDate.
+*/
+
+-- Drop Foreign Key Constraint from OrderItems Table - OrderID
+ALTER TABLE OrderItems DROP CONSTRAINT FK__OrderItem__Order__44FF419A;
+
+-- Clustered Index on OrderID
+CREATE CLUSTERED INDEX IDX_Orders_OrderID
+ON Orders(OrderID);
+GO
+
+-- Non-Clustered Index on CustomerID: To speed up queries filtering by CustomerID.
+CREATE NONCLUSTERED INDEX IDX_Orders_CustomerID
+ON Orders(CustomerID);
+GO
+
+--  Non-Clustered Index on OrderDate: To speed up queries filtering or sorting by OrderDate.
+CREATE NONCLUSTERED INDEX IDX_Orders_OrderDate
+ON Orders(OrderDate);
+GO
+
+-- Recreate Foreign Key Constraint on OrderItems (OrderID Column)
+ALTER TABLE OrderItems ADD CONSTRAINT FK_OrderItems_OrderID
+FOREIGN KEY (OrderID) REFERENCES Orders(OrderID);
+GO
+
+/*
+D. Indexes on OrderItems Table
+	1. Clustered Index on OrderItemID: Usually created with the primary key.
+	2. Non-Clustered Index on OrderID: To speed up queries filtering by OrderID.
+	3. Non-Clustered Index on ProductID: To speed up queries filtering by ProductID.
+*/
+
+-- Clustered Index on OrderItemID
+CREATE CLUSTERED INDEX IDX_OrderItems_OrderItemID
+ON OrderItems(OrderItemID);
+GO
+
+-- Non-Clustered Index on OrderID: To speed up queries filtering by OrderID.
+CREATE NONCLUSTERED INDEX IDX_OrderItems_OrderID
+ON OrderItems(OrderID);
+GO
+
+--  Non-Clustered Index on ProductID: To speed up queries filtering by ProductID.
+CREATE NONCLUSTERED INDEX IDX_OrderItems_ProductID
+ON OrderItems(ProductID);
+GO
+
+
+/*
+
+E. Indexes on Customers Table
+	1. Clustered Index on CustomerID: Usually created with the primary key.
+	2. Non-Clustered Index on Email: To speed up queries filtering by Email.
+	3. Non-Clustered Index on Country: To speed up queries filtering by Country.
+*/
+
+-- Drop Foreign Key Constraint from Orders Table - CustomerID
+ALTER TABLE Orders DROP CONSTRAINT FK__Orders__Customer__403A8C7D;
+
+-- Clustered Index on CustomerID
+CREATE CLUSTERED INDEX IDX_Customers_CustomerID
+ON Customers(CustomerID);
+GO
+
+-- Non-Clustered Index on Email: To speed up queries filtering by Email.
+CREATE NONCLUSTERED INDEX IDX_Customers_Email
+ON Customers(Email);
+GO
+
+--  Non-Clustered Index on Country: To speed up queries filtering by Country.
+CREATE NONCLUSTERED INDEX IDX_Customers_Country
+ON Customers(Country);
+GO
+
+-- Recreate Foreign Key Constraint on Orders (CustomerID Column)
+ALTER TABLE Orders ADD CONSTRAINT FK_Orders_CustomerID
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID);
+GO
+
+/*
+===============================
+Implementing Views
+===============================
+
+	Views are virtual tables that represent the result of a query. 
+	They can simplify complex queries and enhance security by restricting access to specific data.
+
+*/
+
+-- View for Product Details: A view combining product details with category names.
+CREATE VIEW vw_ProductDeails AS
+SELECT p.ProductID, p.ProductName, p.Price, p.Stock, c.CategoryName
+FROM Products p INNER JOIN Categories c
+ON p.CategoryID = c.CategoryID;
+GO
+
+-- Display product details with category names using view
+SELECT * FROM vw_ProductDeails;
+
+-- View for Customer Orders : A view to get a summary of orders placed by each customer.
+CREATE VIEW vw_CustomerOrders 
+AS
+SELECT c.CustomerID, c.FirstName, c.LastName, COUNT(o.OrderID) AS TotalOrders,
+SUM(oi.Quantity * p.Price) as TotalAmount
+FROM Customers c 
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
+INNER JOIN Products p ON oi.ProductID = p.ProductID
+GROUP BY c.CustomerID, c.FirstName, c.LastName;
+GO
+
+
+-- View for Recent Orders: A view to display orders placed in the last 30 days.
+CREATE VIEW vw_RecentOrders 
+AS
+SELECT o.OrderID, o.OrderDate, c.CustomerID, c.FirstName, c.LastName,
+SUM(oi.Quantity * oi.Price) as OrderAmount
+FROM Customers c 
+INNER JOIN Orders o ON c.CustomerID = o.CustomerID
+INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
+GROUP BY o.OrderID, o.OrderDate, c.CustomerID, c.FirstName, c.LastName;
+GO
+
+--Query 31: Retrieve All Products with Category Names
+--Using the vw_ProductDetails view to get a list of all products along with their category names.
+SELECT * FROM vw_ProductDeails;
+
+--Query 32: Retrieve Products within a Specific Price Range
+--Using the vw_ProductDetails view to find products priced between $100 and $500.
+SELECT * FROM vw_ProductDeails WHERE Price BETWEEN 10 AND 500;
+
+--Query 33: Count the Number of Products in Each Category
+--Using the vw_ProductDetails view to count the number of products in each category.
+SELECT CategoryName, Count(ProductID) AS ProductCount
+FROM vw_ProductDeails GROUP BY CategoryName; 
+
+--Query 34: Retrieve Customers with More Than 1 Orders
+--Using the vw_CustomerOrders view to find customers who have placed more than 1 orders.
+SELECT * FROM vw_CustomerOrders WHERE TotalOrders > 1;
+
+--Query 35: Retrieve the Total Amount Spent by Each Customer
+--Using the vw_CustomerOrders view to get the total amount spent by each customer.
+SELECT CustomerID, FirstName, LastName, TotalAmount FROM vw_CustomerOrders
+ORDER BY TotalAmount DESC;
+
+--Query 36: Retrieve Recent Orders Above a Certain Amount
+--Using the vw_RecentOrders view to find recent orders where the total amount is greater than $1000.
+SELECT * FROM vw_RecentOrders WHERE OrderAmount > 1000;
+
+--Query 37: Retrieve the Latest Order for Each Customer
+--Using the vw_RecentOrders view to find the latest order placed by each customer.
+SELECT ro.OrderID, ro.OrderDate, ro.CustomerID, ro.FirstName, ro.LastName, ro.OrderAmount
+FROM vw_RecentOrders ro
+INNER JOIN 
+(SELECT CustomerID, Max(OrderDate) as LatestOrderDate FROM vw_RecentOrders GROUP BY CustomerID)
+latest
+ON ro.CustomerID = latest.CustomerID AND ro.OrderDate = latest.LatestOrderDate
+ORDER BY ro.OrderDate DESC;
+GO
+
+--Query 38: Retrieve Products in a Specific Category
+--Using the vw_ProductDetails view to get all products in a specific category, such as 'Electronics'.
+SELECT * FROM vw_ProductDeails WHERE CategoryName = 'Books';
+
+--Query 39: Retrieve Total Sales for Each Category
+--Using the vw_ProductDetails and vw_CustomerOrders views to calculate the total sales for each category.
+SELECT pd.CategoryName, SUM(oi.Quantity * p.Price) AS TotalSales
+FROM OrderItems oi
+INNER JOIN Products p ON oi.ProductID = p.ProductID
+INNER JOIN vw_ProductDeails pd ON p.ProductID = pd.ProductID
+GROUP BY pd.CategoryName
+ORDER BY TotalSales DESC;
+
+--Query 40: Retrieve Customer Orders with Product Details
+--Using the vw_CustomerOrders and vw_ProductDetails views to get customer orders along with the details 
+-- of the products ordered.
+SELECT co.CustomerID, co.FirstName, co.LastName, o.OrderID, o.OrderDate,
+pd.ProductName, oi.Quantity, pd.Price
+FROM Orders o 
+INNER JOIN OrderItems oi ON o.OrderID = oi.OrderID
+INNER JOIN vw_ProductDeails pd ON oi.ProductID = pd.ProductID
+INNER JOIN vw_CustomerOrders co ON o.CustomerID = co.CustomerID
+ORDER BY o.OrderDate DESC;
+
+--Query 41: Retrieve Top 5 Customers by Total Spending
+--Using the vw_CustomerOrders view to find the top 5 customers based on their total spending.
+SELECT TOP 5 CustomerID, FirstName, LastName, TotalAmount 
+FROM vw_CustomerOrders ORDER BY TotalAmount DESC;
+
+--Query 42: Retrieve Products with Low Stock
+--Using the vw_ProductDetails view to find products with stock below a certain threshold, such as 10 units.
+SELECT * FROM vw_ProductDeails WHERE Stock < 50;
+
+--Query 43: Retrieve Orders Placed in the Last 7 Days
+--Using the vw_RecentOrders view to find orders placed in the last 7 days.
+SELECT * from vw_RecentOrders WHERE OrderDate >= DATEADD(DAY, -7, GETDATE());
+
+--Query 44: Retrieve Products Sold in the Last Month
+--Using the vw_RecentOrders view to find products sold in the last month.
+SELECT p.ProductID, p.ProductName, SUM(oi.Quantity) AS TotalSold
+FROM vw_RecentOrders ro
+INNER JOIN OrderItems oi ON ro.OrderID = oi.OrderID
+INNER JOIN Products p ON oi.ProductID = p.ProductID
+WHERE ro.OrderDate >= DATEADD(MONTH, -1, GETDATE())
+GROUP BY p.ProductID, p.ProductName
+ORDER BY TotalSold DESC;
