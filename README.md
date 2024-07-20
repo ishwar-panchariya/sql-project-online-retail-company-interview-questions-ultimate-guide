@@ -3,7 +3,8 @@
 Are you preparing for a SQL interview or looking to enhance your database skills? This video is perfect for you! Dive into a comprehensive SQL project designed for an online retail company, featuring practical queries that are essential for cracking interviews and mastering SQL.
 
 📌 **Topics Covered:**
-** SECTION ONE: https://youtu.be/d7BPBJ9JkgI?si=6ugrUsDbM40j4shX **
+
+**SECTION ONE:  https://youtu.be/d7BPBJ9JkgI?si=6ugrUsDbM40j4shX** 
 1. Database Design and Schema Creation
 2. Basic to Advanced SQL Queries
 3. Data Aggregation and Analysis
@@ -11,25 +12,25 @@ Are you preparing for a SQL interview or looking to enhance your database skills
 5. Real-World Problem Solving
 6. Triggers on Tables for Record Log Maintenance
 
-** SECTION TWO: https://youtu.be/vQSdgzo0IoU?si=MMDIefLCuPDSSWDi **
+**SECTION TWO: https://youtu.be/vQSdgzo0IoU?si=MMDIefLCuPDSSWDi**
 1. 📊 Creating a ChangeLog table
 2. 🔄 Writing triggers for automatic logging
 3. 📝 Displaying custom messages on trigger execution
 4. 🔍 Detailed step-by-step explanations
 
-** SECTION THREE: https://youtu.be/vQSdgzo0IoU?si=f4Qr6Pb7Zs16XBly **
+**SECTION THREE: https://youtu.be/vQSdgzo0IoU?si=f4Qr6Pb7Zs16XBly**
 1. 📋 Introduction to Indexing
 2. 🛠️ Creating and Managing Indexes
 3. 📈 Performance Optimization Techniques
 4. 🧩 Practical Examples and Use Cases
 
-** SECTION FOUR: https://youtu.be/H2Hs_KBWTMI?si=IiH2ntghQv3RvCzE **
+**SECTION FOUR: https://youtu.be/H2Hs_KBWTMI?si=IiH2ntghQv3RvCzE**
 1. 📋 Introduction to Views
 2. 🛠️ How to Create and Manage Views
 3. 📈 Optimizing Database Performance with Views
 4. 🧩 Real-World Examples and Use Cases
 
-** SECTION FIVE: https://youtu.be/k7DF8xiaPVc **
+**SECTION FIVE: https://youtu.be/k7DF8xiaPVc**
 1. 📝 About Security Feature or Data Control Language (DCL)
 2. 🗝️ Creating Logins
 3. 🧑‍💻 Creating Users
