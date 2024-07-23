@@ -2,6 +2,11 @@
 
 Are you preparing for a SQL interview or looking to enhance your database skills? This video is perfect for you! Dive into a comprehensive SQL project designed for an online retail company, featuring practical queries that are essential for cracking interviews and mastering SQL.
 
+**Database Diagram**
+
+![database diagram](https://github.com/user-attachments/assets/2ee8d91b-8a07-463a-9331-38f9415710e0)
+
+
 📌 **Topics Covered:**
 
 **SECTION ONE:  https://youtu.be/d7BPBJ9JkgI?si=6ugrUsDbM40j4shX** 
