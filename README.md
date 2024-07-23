@@ -46,6 +46,14 @@ Are you preparing for a SQL interview or looking to enhance your database skills
 8. 📝 Summary
 9. 📝 Queries - Different Scenarios based Role and Permission Grant, Revoke
 
+**SECTION SIX: https://youtu.be/FeZj3PiKV4I**
+1. 💡 Intro
+2. 💾 Creating Database Backups
+3. 🛠️ Restoring Databases
+4. 📅 Creating Automated Maintenance Plans
+5. ⏲️ Scheduling SQL Agent Jobs
+6. 🔚 Wrapping up the project - Closing Note
+
 🔍 **Why Watch This Video?**
 - Learn SQL by working on a real-world project
 - Understand common interview questions and how to solve them
